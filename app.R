@@ -44,7 +44,7 @@ ui <- fluidPage(
             checkboxInput("logtansform", "Log transform values", FALSE),
             radioButtons("norm", "Scale by", choices=c("none","row","column")),
             radioButtons("datasource", "Choose rank group", choices=c("Top 1-50 genes","Top 51-100 genes"))
-            
+            ,textOutput("combined_text_display")
         ),
         
         
@@ -52,7 +52,7 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
            plotOutput("distPlot")
-           ,textOutput("textcontent")
+           
            
         )
     )
@@ -61,13 +61,14 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output,session) {
 
-    #text_variables <- paste0(input$datasource, input$logtansform, input$select)
+    combined_text <- reactive({
+      paste0("Variables:", "Data Source=", input$datasource, input$logtansform, input$select, sep = "\n")
+    })
   
-    output$textcontent <- renderText({
-      paste(sep = "\n", "\nVariables Chosen:\n", input$datasource, '\n', input$logtansform,'\n', input$select)
-      
-      })
-  
+    output$combined_text_display <- renderText({
+      combined_text()
+    })
+    
     output$distPlot <- renderPlot({
 
       if(input$datasource == "Top 51-100 genes"){
