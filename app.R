@@ -38,20 +38,21 @@ ui <- fluidPage(
                         min = 6,
                         max = 14,
                         value = 10),
-            selectInput("select", "Select annotation", choices=c("none",colnames(experiment)),selected = NULL, multiple = T,
+            selectInput("select", "Select annotation", choices=c("none",colnames(experiment)),selected = "none", multiple = T,
                         selectize = TRUE),
             checkboxInput("srownames", "Show Row Names", FALSE),
             checkboxInput("logtansform", "Log transform values", FALSE),
             radioButtons("norm", "Scale by", choices=c("none","row","column")),
             radioButtons("datasource", "Choose rank group", choices=c("Top 1-50 genes","Top 51-100 genes"))
-            ,textOutput("combined_text_display")
+            
         ),
         
         
 
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("distPlot")
+           textOutput("combined_text_display")
+           ,plotOutput("distPlot")
            
            
         )
@@ -62,7 +63,11 @@ ui <- fluidPage(
 server <- function(input, output,session) {
 
     combined_text <- reactive({
-      paste0("Variables:", "Data Source=", input$datasource, input$logtansform, input$select, sep = "\n")
+      paste0("Variables:", 
+             "Data Source=", input$datasource, 
+             "Logtransform=", input$logtansform, 
+             "Selected Annotations=", input$select, 
+             sep = "\n")
     })
   
     output$combined_text_display <- renderText({
